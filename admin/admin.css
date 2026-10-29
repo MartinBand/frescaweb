@@ -1,0 +1,287 @@
+/* FRESCA · Panel. Misma paleta y tipografías que la tienda. */
+:root{
+  --noche:#0c0b10; --panel:#17151d; --panel2:#221f2a; --line:#302b3a;
+  --neon:#e6ef6e; --violeta:#9b5de5; --violeta-cl:#c9a4f3; --turquesa:#22b8a8;
+  --obra:#f5c518; --rojo:#ff7a6b; --verde-wa:#25d366;
+  --text:#f4f1e8; --muted:#aca6b6; --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--noche);color:var(--text);font-family:'Archivo',system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased;min-height:100vh}
+body.con-sesion{padding-bottom:76px}
+a{color:var(--neon)}
+img{display:block;max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.sub{color:var(--muted);font-size:14px}
+.cargando{color:var(--muted);padding:24px 0}
+.centro-txt{text-align:center;padding:60px 16px;color:var(--muted)}
+.error{color:var(--rojo);font-size:13px;min-height:0}
+.error:empty{display:none}
+.aviso{background:rgba(245,197,24,.08);border:1px dashed var(--obra);border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
+:focus-visible{outline:2px solid var(--turquesa);outline-offset:2px}
+
+/* Botones */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:9px 16px;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;white-space:nowrap;min-height:40px}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled,.btn.deshabilitado{opacity:.5;cursor:not-allowed;pointer-events:none}
+.btn.primario{background:var(--neon);border-color:var(--neon);color:#111;box-shadow:0 0 16px rgba(230,239,110,.25)}
+.btn.peligro{color:var(--rojo);border-color:rgba(255,122,107,.4);background:transparent}
+.btn.chico{padding:6px 12px;font-size:13px;min-height:34px}
+.btn.ancho{width:100%;margin-top:16px;min-height:46px;font-size:16px}
+.btn.whatsapp{background:var(--verde-wa);border-color:var(--verde-wa);color:#08311a}
+.fila-botones{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.fila-botones.izq{justify-content:flex-start;margin:18px 0 6px}
+
+/* Formularios */
+label{font-size:14px;font-weight:700}
+input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px;min-height:44px}
+textarea{resize:vertical;min-height:44px}
+input[aria-invalid]{border-color:var(--rojo)}
+input[type=checkbox],input[type=radio]{width:auto;min-height:0;accent-color:var(--turquesa)}
+.campos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 16px}
+.campo{display:flex;flex-direction:column;gap:6px;padding:6px 0}
+.campo.ancho{grid-column:1/-1}
+.campo small{color:var(--muted);font-size:12.5px}
+.etq-campo{font-size:14px;font-weight:700}
+.check{display:flex;align-items:center;gap:8px;margin-top:10px;font-weight:500;font-size:15px}
+
+/* Login */
+.centro{min-height:100vh;display:grid;place-items:center;padding:24px 16px}
+.caja{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px 22px;display:flex;flex-direction:column;gap:8px}
+.caja h1{font-family:'Bebas Neue';font-weight:400;font-size:34px;letter-spacing:.03em;text-align:center;margin-bottom:8px}
+.caja label{margin-top:6px}
+.logo-login{width:190px;margin:0 auto 4px;filter:drop-shadow(0 0 4px rgba(230,239,110,.9)) drop-shadow(0 0 18px rgba(230,239,110,.45))}
+.volver{text-align:center;font-size:14px;margin-top:12px;color:var(--muted)}
+.enlace{background:none;border:0;color:var(--turquesa);font-size:14px;font-weight:700;cursor:pointer;padding:10px;margin-top:4px;text-decoration:underline;text-underline-offset:3px}
+.clave-caja{position:relative}
+.clave-caja input{padding-right:50px}
+.ojo{position:absolute;top:0;right:0;width:46px;height:100%;display:grid;place-items:center;background:none;border:0;color:var(--muted);cursor:pointer;border-radius:0 10px 10px 0}
+.ojo:hover,.ojo[aria-pressed="true"]{color:var(--text)}
+.ojo svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.caja-clave{display:flex;flex-direction:column;gap:8px}
+
+/* Encabezado y navegación */
+header.top{position:sticky;top:0;z-index:20;background:rgba(12,11,16,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:18px;height:60px}
+.marca{flex-shrink:0;display:flex;align-items:center;gap:8px;text-decoration:none;color:var(--muted);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+.marca img{height:34px;width:auto;filter:drop-shadow(0 0 3px rgba(230,239,110,.8)) drop-shadow(0 0 12px rgba(230,239,110,.35))}
+.nav{display:flex;gap:4px;flex:1}
+.nav a,.tabbar a{display:flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;font-weight:700;font-size:14px;padding:8px 12px;border-radius:99px}
+.nav a.on{color:#111;background:var(--neon)}
+.nav a{white-space:nowrap}
+/* Pantallas medianas: el menú se achica para no pisar el logo */
+@media (max-width:1180px){ .usuario span{display:none} .nav a{padding:8px 10px} }
+@media (max-width:1000px){ .nav svg{display:none} }
+.nav svg,.tabbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.usuario{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);min-width:0}
+.usuario span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.tabbar{display:none}
+.banda-demo{background:var(--obra);color:#111;border-top:4px solid #111;border-bottom:4px solid #111;text-align:center;font-family:'Bebas Neue';font-size:18px;letter-spacing:.06em;padding:2px 0}
+
+main{padding-top:22px;padding-bottom:40px;outline:none}
+.titulo{font-family:'Bebas Neue';font-weight:400;font-size:clamp(34px,6vw,46px);letter-spacing:.03em;line-height:1}
+.cabecera{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:16px}
+.panel h2{font-family:'Bebas Neue';font-weight:400;font-size:26px;letter-spacing:.03em;margin-bottom:10px}
+.vacio{color:var(--muted);text-align:center;padding:34px 12px;border:1px dashed var(--line);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;gap:14px}
+.vacio.chico{padding:16px}
+
+/* Inicio */
+.tarjetas{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:18px}
+.tarjeta{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;gap:2px;transition:border-color .15s,transform .15s}
+.tarjeta:hover{border-color:var(--muted);transform:translateY(-2px)}
+.tarjeta .valor{font-family:'Bebas Neue';font-size:46px;line-height:1}
+.tarjeta .etq{color:var(--muted);font-size:14px;font-weight:700}
+.tarjeta.acento .valor{color:var(--neon)}
+.tarjeta.rojo{border-color:rgba(255,122,107,.5)} .tarjeta.rojo .valor{color:var(--rojo)}
+.tarjeta.amarillo{border-color:rgba(245,197,24,.5)} .tarjeta.amarillo .valor{color:var(--obra)}
+.lista-simple{list-style:none}
+.lista-simple li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.lista-simple li:last-child{border:0}
+.fila-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fila-form input{width:90px}
+
+/* Badges de stock */
+.badge{display:inline-block;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:800;white-space:nowrap}
+.badge.ok{background:rgba(34,184,168,.15);color:#7fe3d6}
+.badge.bajo{background:rgba(245,197,24,.16);color:var(--obra)}
+.badge.agotado{background:rgba(255,122,107,.16);color:var(--rojo)}
+
+/* Listado de productos */
+.filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end}
+.filtros input[type=search]{flex:2 1 220px}
+.filtros select{flex:1 1 170px;width:auto}
+.fila-prod{display:grid;grid-template-columns:56px minmax(0,2.2fr) 1fr 1fr auto auto;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;margin-top:8px}
+.fila-prod.inactivo{opacity:.65}
+.mini{width:56px;height:56px;border-radius:10px;background:var(--panel2) url('../fotos/logo-fresca.png') center/70% no-repeat;overflow:hidden}
+.mini img{width:100%;height:100%;object-fit:cover}
+.info{display:flex;flex-direction:column;min-width:0}
+.info .nombre{color:var(--text);font-weight:800;text-decoration:none;overflow:hidden;text-overflow:ellipsis}
+.info .nombre:hover{color:var(--neon)}
+.precio s{color:var(--muted);font-size:13px}
+.stock{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.stock small{color:var(--muted);font-size:12px}
+.botones{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.switch{display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500}
+.switch input{position:absolute;opacity:0;width:1px;height:1px}
+.switch .pista{width:42px;height:24px;border-radius:99px;background:var(--panel2);border:1px solid var(--line);position:relative;flex:none;transition:.15s}
+.switch .pista::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:.15s}
+.switch input:checked + .pista{background:var(--turquesa);border-color:var(--turquesa)}
+.switch input:checked + .pista::after{left:20px;background:#fff}
+.switch input:focus-visible + .pista{outline:2px solid var(--turquesa);outline-offset:2px}
+.switch em{font-style:normal;font-size:13px;color:var(--muted);min-width:62px}
+
+/* Formulario de producto */
+.form-prod .panel:first-child{margin-top:0}
+.fotos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:12px}
+.foto{position:relative;background:var(--panel2);border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.foto.principal{border-color:var(--neon)}
+.foto img{width:100%;aspect-ratio:1;object-fit:cover}
+.etq-foto{position:absolute;top:6px;left:6px;background:var(--neon);color:#111;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px}
+.etq-foto.nueva{left:auto;right:6px;background:var(--violeta);color:#fff}
+.foto figcaption{display:flex;justify-content:space-between;padding:4px}
+.foto figcaption button{background:none;border:0;color:var(--text);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:15px}
+.foto figcaption button:hover:not(:disabled){background:var(--line)}
+.foto figcaption button:disabled{opacity:.3;cursor:default}
+.foto figcaption .peligro{color:var(--rojo)}
+.foto .opcion-foto{display:block;width:calc(100% - 8px);margin:0 4px 6px;min-height:38px;padding:6px 8px}
+.subir{cursor:pointer;position:relative}
+.subir:focus-within{outline:2px solid var(--turquesa);outline-offset:2px}
+.oculto-visual{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0)}
+.stock-actual{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.barra-guardar{position:sticky;bottom:0;z-index:5;display:flex;gap:10px;align-items:center;background:rgba(12,11,16,.95);backdrop-filter:blur(8px);border-top:1px solid var(--line);margin:16px -16px 0;padding:12px 16px}
+.barra-guardar .espacio{flex:1}
+
+/* Modal */
+dialog{margin:auto;border:0;background:transparent;color:var(--text);max-width:min(460px,calc(100vw - 32px));width:100%}
+dialog::backdrop{background:rgba(0,0,0,.65);backdrop-filter:blur(2px)}
+.modal-caja{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:8px}
+.modal-caja h2{font-family:'Bebas Neue';font-weight:400;font-size:30px;letter-spacing:.03em;line-height:1}
+.modal-caja p{color:var(--muted)}
+.modal-caja .stock-actual{font-size:15px;margin:4px 0}
+.segmentado{border:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}
+.segmentado legend{font-size:14px;font-weight:700;margin-bottom:6px}
+.segmentado label{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 6px;font-weight:700;font-size:13px;cursor:pointer;text-align:center}
+.segmentado label:has(input:checked){border-color:var(--turquesa);background:rgba(34,184,168,.15)}
+.segmentado input{position:absolute;opacity:0}
+.resultado{background:var(--panel2);border-radius:10px;padding:10px 12px;margin-top:6px}
+.resultado b{color:var(--neon);font-size:18px}
+.resultado b.neg{color:var(--rojo)}
+
+/* Historial */
+.tabla-hist{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tabla-hist .th,.tabla-hist .tr{display:grid;grid-template-columns:120px minmax(0,1.6fr) 110px 70px 90px minmax(0,1.6fr) minmax(0,1.3fr);gap:10px;padding:10px 14px;align-items:center;font-size:14px}
+.tabla-hist .th{background:var(--panel2);color:var(--muted);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+.tabla-hist .tr{border-top:1px solid var(--line)}
+.tabla-hist .tr span{overflow-wrap:anywhere}
+.pos{color:#7fe3d6;font-weight:800} .neg{color:var(--rojo);font-weight:800}
+
+/* Pedidos */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:99px;padding:7px 14px;font-weight:700;font-size:14px;text-decoration:none}
+.chip.on{background:var(--turquesa);border-color:var(--turquesa);color:#062420}
+.fecha-f{display:flex;align-items:center;gap:6px;font-weight:500;color:var(--muted)}
+.fecha-f input{width:auto}
+.fecha-f select{width:auto}
+#filtrosVentas .fecha-f{white-space:nowrap;flex-wrap:wrap}
+.pedido{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.pedido.e-nuevo{border-left-color:var(--neon)}
+.pedido.e-confirmado{border-left-color:var(--violeta)}
+.pedido.e-pagado{border-left-color:var(--turquesa)}
+.pedido.e-entregado{border-left-color:#4b4656;opacity:.85}
+.pedido.e-cancelado{border-left-color:var(--rojo);opacity:.7}
+.pedido header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pedido header select{width:auto;min-height:38px;padding:6px 10px;font-weight:700}
+.pedido .detalle{white-space:pre-wrap;font-family:inherit;background:var(--panel2);border-radius:10px;padding:10px 12px;font-size:14px}
+.pedido .meta{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.pedido .meta b{color:var(--neon)}
+.pedido .coment{font-size:14px;color:var(--violeta-cl)}
+.pedido .nota{display:flex;gap:8px;align-items:flex-start}
+.pedido .nota textarea{font-size:14px;min-height:38px;padding:8px 10px}
+.pedido .acciones-ped{display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center}
+.desc-lista{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+.desc-fila{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.desc-fila .check{flex:1 1 200px;margin:0}
+.desc-fila select{width:auto;min-height:38px;padding:6px 10px}
+.desc-fila small{flex-basis:100%;color:var(--muted)}
+.desc-fila small.neg{color:var(--rojo)}
+.desc-fila.off{opacity:.75}
+.horarios-ed{display:flex;flex-direction:column;gap:6px;margin:6px 0 10px;max-width:520px}
+.dia-fila{display:grid;grid-template-columns:minmax(120px,1fr) auto auto auto;align-items:center;gap:8px;padding:6px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px}
+.dia-fila .check{margin:0;font-weight:700}
+.dia-fila input[type=time]{width:auto;min-height:38px;padding:6px 8px}
+.dia-fila input:disabled{opacity:.35}
+@media (max-width:520px){
+  .dia-fila{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+  .dia-fila .check{grid-column:1/-1}
+  .dia-fila input[type=time]{width:100%}
+}
+#estadoAhora{margin:6px 0}
+
+/* Avisos flotantes */
+#toasts{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;width:max-content;max-width:calc(100vw - 32px);pointer-events:none}
+.toast{background:#111;color:var(--neon);border:1px solid var(--neon);padding:10px 16px;border-radius:14px;font-size:14px;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,.5);transition:opacity .4s,transform .4s}
+.toast.error{color:#ffd2cc;border-color:var(--rojo);background:#2a1214}
+.toast.fuera{opacity:0;transform:translateY(8px)}
+
+/* Celular y tablet */
+/* Stock por talle o color */
+.talles-stock{display:flex;flex-direction:column;gap:6px;margin:6px 0;max-width:460px}
+.talle-fila{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:6px 10px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;font-weight:700}
+.talle-fila input{width:110px;min-height:38px;padding:6px 10px}
+.talle-fila.total{background:none;border-style:dashed}
+.talle-fila.total .btn{grid-column:auto}
+label.talle-fila{grid-template-columns:minmax(0,1fr) auto;cursor:text}
+.talles{display:block;color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+.talles .talle-0{color:var(--rojo);font-weight:700}
+
+/* Ventas */
+.ventas{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:28px;align-items:center}
+.torta{position:relative;width:100%;max-width:300px;margin:0 auto}
+.torta svg{display:block;width:100%;height:auto}
+.torta path{stroke:var(--panel);stroke-width:2;transition:opacity .15s}
+.torta-centro{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:0 22%}
+.torta-centro .valor{font-family:'Bebas Neue';font-size:clamp(26px,8vw,38px);line-height:1;color:var(--neon)}
+.torta-centro .etq{color:var(--muted);font-size:12.5px;font-weight:700;margin-top:4px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.leyenda{width:100%;border-collapse:collapse;font-size:14px}
+.leyenda th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;text-align:right;padding:6px 8px;border-bottom:1px solid var(--line)}
+.leyenda td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;transition:opacity .15s}
+.leyenda th:first-child,.leyenda td:first-child{text-align:left}
+.leyenda tbody td:first-child{display:flex;align-items:center;gap:8px}
+.leyenda tfoot td{font-weight:700;border-bottom:0}
+.leyenda tbody tr{cursor:default}
+.muestra{width:12px;height:12px;flex:none}
+.ventas .apagado{opacity:.3}
+@media (max-width:860px){
+  .nav{display:none}
+  .usuario span{display:none}
+  header.top .wrap{justify-content:space-between}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(18,16,23,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar a{flex:1;flex-direction:column;gap:2px;font-size:11.5px;padding:6px 2px;border-radius:12px}
+  .tabbar a.on{color:var(--neon);background:rgba(230,239,110,.08)}
+  .tabbar svg{width:22px;height:22px}
+  .fila-prod{grid-template-columns:56px minmax(0,1fr) auto;grid-template-areas:"foto info stock" "precio precio switch" "botones botones botones";gap:8px 12px}
+  .fila-prod .mini{grid-area:foto} .fila-prod .info{grid-area:info} .fila-prod .stock{grid-area:stock;align-items:flex-end}
+  .fila-prod .precio{grid-area:precio} .fila-prod .switch{grid-area:switch} .fila-prod .botones{grid-area:botones;justify-content:stretch}
+  .fila-prod .botones .btn{flex:1}
+  .tabla-hist .th{display:none}
+  .tabla-hist .tr{grid-template-columns:1fr 1fr;gap:4px 12px}
+  .tabla-hist .tr span::before{content:attr(data-l);display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .barra-guardar{bottom:62px}
+  #toasts{bottom:150px}
+}
+@media (max-width:560px){
+  .campos{grid-template-columns:1fr}
+  .tarjetas{grid-template-columns:1fr 1fr}
+  .tarjeta .valor{font-size:38px}
+  .filtros select,.filtros input[type=search]{flex:1 1 100%}
+  .barra-guardar{flex-wrap:wrap}
+  .barra-guardar .btn{flex:1}
+  .barra-guardar .espacio{display:none}
+  .pedido .nota{flex-direction:column;align-items:stretch}
+  .ventas{grid-template-columns:1fr;gap:18px}
+  .torta{max-width:260px}
+  .leyenda{font-size:13px}
+  .leyenda th,.leyenda td{padding:8px 4px}
+}

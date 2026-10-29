@@ -1,0 +1,13 @@
+# Copia lista para arrastrar a Netlify (se arma desde los archivos de la raíz)
+publicar/
+
+# Fotos originales sin procesar (pesadas; algunas muestran gente)
+fotos-nuevas/
+
+# Sistema y editores
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+node_modules/
+.env*
