@@ -152,6 +152,28 @@ export function crearApi() {
     // Descuenta del stock los artículos del pedido, todo junto. Devuelve el pedido actualizado.
     async descontarPedido(id, lineas) { return ok(await sb.rpc("descontar_pedido", { p_pedido: id, p_lineas: lineas })); },
 
+    // Agenda. La foto se sube antes de guardar el evento; si el guardado falla se borra.
+    async eventos() {
+      return ok(await sb.from("eventos").select("*").order("fecha", { ascending: false }).order("hora", { ascending: false }).limit(300));
+    },
+    async subirFotoEvento(blob) {
+      const ruta = await subirArchivo("eventos", blob);
+      if (!ruta) throw new ErrorApp("No se pudo subir la foto. Probá con otra imagen o intentá de nuevo.");
+      return ruta;
+    },
+    async crearEvento(datos) { return ok(await sb.from("eventos").insert(datos).select().single()); },
+    async actualizarEvento(id, datos, version) {
+      const fila = ok(await sb.from("eventos").update(datos).eq("id", id).eq("version", version).select().maybeSingle());
+      if (!fila) throw new Conflicto("Otra persona modificó este evento mientras lo editabas. Recargá la página para ver los cambios.");
+      return fila;
+    },
+    async eliminarEvento(id) {
+      const filas = ok(await sb.from("eventos").delete().eq("id", id).select("foto"));
+      const rutas = filas.map(f => f.foto).filter(Boolean);
+      if (rutas.length) await sb.storage.from(BUCKET).remove(rutas);
+    },
+    async borrarArchivos(rutas) { if (rutas.length) await sb.storage.from(BUCKET).remove(rutas); },
+
     async pedidos({ estado, desde, hasta, limite = 300 } = {}) {
       let q = sb.from("pedidos").select("*").order("fecha", { ascending: false }).limit(limite);
       if (estado) q = q.eq("estado", estado);
@@ -188,7 +210,8 @@ export function crearApi() {
   };
   // Lo que cambia lo que ve la web
   for (const k of ["crearProducto", "actualizarProducto", "eliminarProducto", "moverStock", "separarStock", "subirFoto",
-    "borrarFoto", "opcionFoto", "fotoPrincipal", "ordenarFotos", "descontarPedido", "guardarLocal"]) {
+    "borrarFoto", "opcionFoto", "fotoPrincipal", "ordenarFotos", "descontarPedido", "guardarLocal",
+    "crearEvento", "actualizarEvento", "eliminarEvento"]) {
     const original = api[k];
     api[k] = async (...args) => { const r = await original(...args); avisarWeb(); return r; };
   }

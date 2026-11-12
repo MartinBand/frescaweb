@@ -147,6 +147,22 @@ alter table public.pedidos add column if not exists stock_descontado boolean not
 create index if not exists pedidos_fecha on public.pedidos (fecha desc);
 create index if not exists pedidos_estado on public.pedidos (estado, fecha desc);
 
+-- Agenda: la web muestra los eventos visibles de hoy en adelante (los que pasaron se ocultan solos).
+-- La foto va en la misma carpeta pública que las de productos, dentro de eventos/.
+create table if not exists public.eventos (
+  id             uuid primary key default gen_random_uuid(),
+  titulo         text not null check (char_length(btrim(titulo)) between 2 and 80),
+  fecha          date not null,
+  hora           text check (hora is null or hora ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$'),
+  descripcion    text not null default '' check (char_length(descripcion) <= 600),
+  foto           text check (foto is null or foto ~ '^eventos/[0-9a-f-]{36}\.(webp|jpg)$'),
+  visible        boolean not null default true,
+  version        int not null default 1,
+  creado_en      timestamptz not null default now(),
+  actualizado_en timestamptz not null default now()
+);
+create index if not exists eventos_fecha on public.eventos (fecha);
+
 -- ---------- Funciones auxiliares ----------
 
 create or replace function public.es_admin()
@@ -173,6 +189,9 @@ create trigger productos_tocar before update on public.productos
   for each row execute function public.tocar_registro();
 drop trigger if exists pedidos_tocar on public.pedidos;
 create trigger pedidos_tocar before update on public.pedidos
+  for each row execute function public.tocar_registro();
+drop trigger if exists eventos_tocar on public.eventos;
+create trigger eventos_tocar before update on public.eventos
   for each row execute function public.tocar_registro();
 
 -- La primera foto de un producto queda como principal; si se borra la
@@ -440,9 +459,10 @@ alter table public.producto_fotos    enable row level security;
 alter table public.movimientos_stock enable row level security;
 alter table public.pedidos           enable row level security;
 alter table public.producto_variantes enable row level security;
+alter table public.eventos           enable row level security;
 
 revoke all on public.admins, public.ajustes, public.productos, public.producto_fotos,
-              public.movimientos_stock, public.pedidos, public.producto_variantes from anon, authenticated;
+              public.movimientos_stock, public.pedidos, public.producto_variantes, public.eventos from anon, authenticated;
 -- Las variantes se crean y cambian solo con las opciones del producto y con mover_stock / separar_stock
 grant select on public.producto_variantes to authenticated;
 
@@ -457,6 +477,8 @@ grant select, delete on public.producto_fotos to authenticated;
 grant insert (producto_id, ruta, ruta_chica, orden, opcion), update (opcion, ruta_chica) on public.producto_fotos to authenticated;
 grant select on public.movimientos_stock to authenticated;
 grant select, update (estado, nota_interna) on public.pedidos to authenticated;
+grant select, delete, insert (titulo, fecha, hora, descripcion, foto, visible),
+  update (titulo, fecha, hora, descripcion, foto, visible) on public.eventos to authenticated;
 
 drop policy if exists admins_propio on public.admins;
 create policy admins_propio on public.admins for select to authenticated using (user_id = auth.uid());
@@ -483,6 +505,10 @@ create policy variantes_admin on public.producto_variantes for select to authent
 
 drop policy if exists pedidos_admin on public.pedidos;
 create policy pedidos_admin on public.pedidos for all to authenticated
+  using (public.es_admin()) with check (public.es_admin());
+
+drop policy if exists eventos_admin on public.eventos;
+create policy eventos_admin on public.eventos for all to authenticated
   using (public.es_admin()) with check (public.es_admin());
 
 revoke execute on function public.es_admin(), public.mover_stock(uuid, text, int, text, int, uuid),

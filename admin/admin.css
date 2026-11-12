@@ -71,11 +71,10 @@ header.top .wrap{display:flex;align-items:center;gap:18px;height:60px}
 .nav a.on{color:#111;background:var(--neon)}
 .nav a{white-space:nowrap}
 /* Pantallas medianas: el menú se achica para no pisar el logo */
-@media (max-width:1180px){ .usuario span{display:none} .nav a{padding:8px 10px} }
-@media (max-width:1000px){ .nav svg{display:none} }
+@media (max-width:1180px){ .nav a{padding:8px 10px} }
+@media (max-width:1100px){ .nav svg{display:none} }
 .nav svg,.tabbar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .usuario{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);min-width:0}
-.usuario span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
 .tabbar{display:none}
 .banda-demo{background:var(--obra);color:#111;border-top:4px solid #111;border-bottom:4px solid #111;text-align:center;font-family:'Bebas Neue';font-size:18px;letter-spacing:.06em;padding:2px 0}
 
@@ -131,6 +130,17 @@ main{padding-top:22px;padding-bottom:40px;outline:none}
 .switch input:checked + .pista::after{left:20px;background:#fff}
 .switch input:focus-visible + .pista{outline:2px solid var(--turquesa);outline-offset:2px}
 .switch em{font-style:normal;font-size:13px;color:var(--muted);min-width:62px}
+
+/* Agenda */
+.fila-evento{display:grid;grid-template-columns:52px 56px minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.fila-evento:last-child{border:0}
+.fila-evento.inactivo{opacity:.65}
+.fecha-ev{display:flex;flex-direction:column;align-items:center;line-height:1.1;color:var(--muted);font-size:12px;font-weight:800;text-transform:uppercase}
+.fecha-ev b{font-family:'Bebas Neue';font-weight:400;font-size:30px;color:var(--neon)}
+.pasados summary{cursor:pointer;font-weight:800;color:var(--muted)}
+.pasados[open] summary{margin-bottom:6px}
+.foto-evento{max-width:420px;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
+.foto-evento img{width:100%;height:100%;object-fit:cover}
 
 /* Formulario de producto */
 .form-prod .panel:first-child{margin-top:0}
@@ -255,7 +265,6 @@ label.talle-fila{grid-template-columns:minmax(0,1fr) auto;cursor:text}
 .ventas .apagado{opacity:.3}
 @media (max-width:860px){
   .nav{display:none}
-  .usuario span{display:none}
   header.top .wrap{justify-content:space-between}
   .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(18,16,23,.97);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
   .tabbar a{flex:1;flex-direction:column;gap:2px;font-size:11.5px;padding:6px 2px;border-radius:12px}
@@ -284,4 +293,16 @@ label.talle-fila{grid-template-columns:minmax(0,1fr) auto;cursor:text}
   .torta{max-width:260px}
   .leyenda{font-size:13px}
   .leyenda th,.leyenda td{padding:8px 4px}
+  .fila-evento{grid-template-columns:44px minmax(0,1fr) auto;grid-template-areas:"fecha info badge" "botones botones botones";gap:8px 12px}
+  .fila-evento .mini{display:none}
+  .fila-evento .fecha-ev{grid-area:fecha} .fila-evento .info{grid-area:info} .fila-evento .badge{grid-area:badge}
+  .fila-evento .botones{grid-area:botones} .fila-evento .botones .btn{flex:1}
 }
+/* Con 7 secciones, en celulares angostos la barra de abajo achica la letra */
+@media (max-width:420px){
+  .tabbar{padding-left:2px;padding-right:2px}
+  .tabbar a{font-size:10px;padding:6px 0;letter-spacing:-.01em}
+  .tabbar svg{width:20px;height:20px}
+  .tabbar a{min-width:0}
+}
+@media (max-width:350px){ .tabbar a{font-size:9px;letter-spacing:-.02em} .marca span{display:none} }

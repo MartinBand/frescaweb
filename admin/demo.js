@@ -53,6 +53,20 @@ export function crearApiDemo() {
     pedido({ numero: "F2809-2120", fecha: hace(600), cliente: "Diego Luna", telefono: "2324 407788", detalle: "6 x Vaso Fresca — $39.000\n1 x Gorro de lana Fresca (Beige) — $18.000", total: 57000, total_texto: "$57.000", estado: "Entregado" })
   ];
 
+  // Agenda de ejemplo: dos próximos y uno que ya pasó
+  const enDias = d => { const f = new Date(Date.now() + d * 864e5); return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(f); };
+  const evento = (o) => ({ id: uuid(), hora: null, descripcion: "", foto: null, visible: true, version: 1, creado_en: ahora(), actualizado_en: ahora(), ...o });
+  urls.set("eventos/demo-barra.jpg", "../fotos/local.jpg");
+  const eventos = [
+    evento({ titulo: "Lanzamiento IPA de la casa", fecha: enDias(3), hora: "20:00", descripcion: "Probamos la nueva IPA tirada. Música en vivo y pinta de bienvenida para los primeros 30.", foto: "eventos/demo-barra.jpg" }),
+    evento({ titulo: "Feria de cervecerías mercedinas", fecha: enDias(17), descripcion: "Cinco cervecerías de la ciudad en la esquina, todo el día." }),
+    evento({ titulo: "Noche de trivia cervecera", fecha: enDias(-6), hora: "21:30" })
+  ];
+  const validarEvento = d => {
+    if (!d.titulo || d.titulo.trim().length < 2 || d.titulo.length > 80 || !/^\d{4}-\d{2}-\d{2}$/.test(d.fecha || "") ||
+      (d.hora && !/^([01]\d|2[0-3]):[0-5]\d$/.test(d.hora)) || (d.descripcion || "").length > 600) throw new ErrorApp("Algún dato no es válido. Revisá el formulario.");
+  };
+
   const vivo = (id) => {
     const p = productos.find(x => x.id === id && !x.eliminado_en);
     if (!p) throw new ErrorApp("El producto no existe o fue eliminado.");
@@ -151,6 +165,17 @@ export function crearApiDemo() {
     async fotoPrincipal(fotoId) { const p = productos.find(x => x.fotos.some(f => f.id === fotoId)); p.fotos.forEach(f => f.principal = f.id === fotoId); },
     async ordenarFotos(productoId, ids) { vivo(productoId).fotos.forEach(f => { const i = ids.indexOf(f.id); if (i >= 0) f.orden = i + 1; }); },
     urlFoto(ruta) { return urls.get(ruta) || ""; },
+
+    async eventos() { await espera(); return copia([...eventos].sort((a, b) => (b.fecha + (b.hora || "")).localeCompare(a.fecha + (a.hora || "")))); },
+    async subirFotoEvento(blob) { await espera(); const ruta = `eventos/${uuid()}.webp`; urls.set(ruta, URL.createObjectURL(blob)); return ruta; },
+    async crearEvento(datos) { await espera(); validarEvento(datos); const ev = { id: uuid(), visible: true, hora: null, descripcion: "", foto: null, ...datos, version: 1, creado_en: ahora(), actualizado_en: ahora() }; eventos.push(ev); return copia(ev); },
+    async actualizarEvento(id, datos, version) {
+      await espera(); const ev = eventos.find(x => x.id === id);
+      if (!ev || ev.version !== version) throw new Conflicto("Otra persona modificó este evento mientras lo editabas. Recargá la página para ver los cambios.");
+      validarEvento({ ...ev, ...datos }); Object.assign(ev, datos, { version: ev.version + 1, actualizado_en: ahora() }); return copia(ev);
+    },
+    async eliminarEvento(id) { await espera(); const i = eventos.findIndex(x => x.id === id); if (i >= 0) eventos.splice(i, 1); },
+    async borrarArchivos() {},
 
     async pedidos({ estado, desde, hasta, limite = 300 } = {}) {
       await espera();

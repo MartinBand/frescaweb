@@ -84,7 +84,7 @@ function doGet(e) {
   const cache = CacheService.getScriptCache();
   let json = cache.get('productos');
   if (!json) {
-    json = JSON.stringify({ productos: leerProductos(), config: leerConfig(), actualizado: new Date().toISOString() });
+    json = JSON.stringify({ productos: leerProductos(), config: leerConfig(), eventos: leerEventos(), actualizado: new Date().toISOString() });
     try { cache.put('productos', json, 60); } catch (err) {} // se renueva cada 60 segundos (si entra en la caché: 100 KB)
   }
   return ContentService.createTextOutput(json).setMimeType(ContentService.MimeType.JSON);
@@ -320,6 +320,29 @@ function leerProductosSupabase() {
       disponible: !p.activo ? 'OCULTAR' : (p.stock > 0 ? 'SI' : 'NO')
     };
   });
+}
+
+/**
+ * Agenda del panel: eventos visibles de hoy en adelante (hora de Argentina), los más cercanos primero.
+ * Sin panel, o si Supabase no responde y no hay una lista anterior, la web no muestra la sección.
+ */
+function leerEventos() {
+  if (prop('FUENTE_PRODUCTOS') !== 'supabase' || !supabaseConfigurado()) return [];
+  const cache = CacheService.getScriptCache();
+  try {
+    const hoy = Utilities.formatDate(new Date(), 'America/Argentina/Buenos_Aires', 'yyyy-MM-dd');
+    const baseFotos = prop('SUPABASE_URL').replace(/\/$/, '') + '/storage/v1/object/public/productos/';
+    const lista = supa('eventos?select=titulo,fecha,hora,descripcion,foto&visible=is.true&fecha=gte.' + hoy +
+      '&order=fecha.asc,hora.asc.nullsfirst&limit=12').map(e => ({
+      titulo: e.titulo, fecha: e.fecha, hora: e.hora || '', descripcion: e.descripcion, foto: e.foto ? baseFotos + e.foto : ''
+    }));
+    try { cache.put('eventos_ultimo', JSON.stringify(lista), 21600); } catch (err) {}
+    return lista;
+  } catch (err) {
+    console.error('No se pudieron leer los eventos: ' + err);
+    const ultima = cache.get('eventos_ultimo');
+    return ultima ? JSON.parse(ultima) : [];
+  }
 }
 
 /** Copia el pedido (ya limpio, ver limpiarPedido) al panel. Si falla, igual quedó en la planilla. */

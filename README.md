@@ -10,9 +10,10 @@ Tienda online para **Fresca**, almacén de cerveza artesanal de Mercedes (Buenos
 ## Qué hace
 
 **Tienda (cliente)**
-- Catálogo con filtros por categoría, talles y colores, precio de promoción tachado.
-- Vista grande de cada producto con varias fotos (una por color) y dirección propia (`#producto/...`).
-- Carrito y pedido que se envía por WhatsApp; opción de pago con Mercado Pago.
+- Catálogo con buscador (sin importar tildes), orden por nombre o precio, filtros por categoría y «En oferta», talles y colores, precio de promoción tachado.
+- Vista grande de cada producto con varias fotos (una por color), dirección propia (`#producto/...`), botón para compartir y productos relacionados.
+- Carrito y pedido que se envía por WhatsApp, con barra fija del pedido; opción de pago con Mercado Pago.
+- Agenda de eventos del local, con enlace para sumarlos a Google Calendar.
 - Cartel de abierto/cerrado según los horarios cargados en el panel, mapa del local.
 - Talles sin stock deshabilitados automáticamente.
 
@@ -22,6 +23,7 @@ Tienda online para **Fresca**, almacén de cerveza artesanal de Mercedes (Buenos
 - Stock por producto y por talle/color, historial de movimientos y alertas de stock bajo.
 - Pedidos con estados, notas internas y descuento de stock al entregar (todo o nada).
 - Ventas por período con gráfico por categoría o producto.
+- Agenda de eventos con foto; los que ya pasaron se ocultan solos de la web.
 - Horarios de atención, estado del local y aviso; la tienda se actualiza al guardar.
 
 ![Panel · productos](portfolio/panel-productos.png)

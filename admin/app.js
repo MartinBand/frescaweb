@@ -270,9 +270,10 @@ const ICONOS = {
   historial: '<path d="M12 7v5l3 2M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/>',
   pedidos: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',
   ventas: '<path d="M12 3a9 9 0 1 0 9 9h-9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
-  local: '<path d="M4 10v10h16V10M3 10l2-6h14l2 6zM10 20v-5h4v5"/>'
+  local: '<path d="M4 10v10h16V10M3 10l2-6h14l2 6zM10 20v-5h4v5"/>',
+  eventos: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'
 };
-const NAV = [["inicio", "Inicio"], ["productos", "Productos"], ["historial", "Stock"], ["pedidos", "Pedidos"], ["ventas", "Ventas"], ["local", "Local"]];
+const NAV = [["inicio", "Inicio"], ["productos", "Productos"], ["historial", "Stock"], ["pedidos", "Pedidos"], ["ventas", "Ventas"], ["eventos", "Agenda"], ["local", "Local"]];
 const icono = k => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONOS[k]}</svg>`;
 
 function pintarMarco() {
@@ -282,9 +283,9 @@ function pintarMarco() {
     <header class="top"><div class="wrap">
       <a class="marca" href="#inicio"><img src="../fotos/logo-fresca.png" alt="Fresca"><span>Panel</span></a>
       <nav class="nav" aria-label="Secciones">${links}</nav>
-      <div class="usuario"><span title="${esc(estado.usuario.email)}">${esc(estado.usuario.email)}</span>
+      <div class="usuario">
         <button class="btn chico" data-accion="cambiar-clave" title="Cambiar contraseña">Contraseña</button>
-        <button class="btn chico" data-accion="salir">Salir</button></div>
+        <button class="btn chico" data-accion="salir" title="Sesión: ${esc(estado.usuario.email)}">Salir</button></div>
     </div></header>
     ${api.modo === "demo" ? `<div class="banda-demo">MODO DEMO · datos de ejemplo, nada se guarda</div>` : ""}
     <main id="vista" class="wrap" tabindex="-1"></main>
@@ -300,7 +301,7 @@ async function enrutar() {
   if (!estado.usuario) return;
   vistaActual++;
   const { partes, params } = parsearHash();
-  const seccion = partes[0] === "producto" ? "productos" : partes[0];
+  const seccion = { producto: "productos", evento: "eventos" }[partes[0]] || partes[0];
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === seccion));
   const v = $("#vista");
   formSucio = false;
@@ -310,6 +311,8 @@ async function enrutar() {
     else if (partes[0] === "historial") await vistaHistorial(v, params);
     else if (partes[0] === "pedidos") await vistaPedidos(v, params);
     else if (partes[0] === "ventas") await vistaVentas(v, params);
+    else if (partes[0] === "eventos") await vistaEventos(v);
+    else if (partes[0] === "evento") await vistaEvento(v, partes[1] || "nuevo");
     else if (partes[0] === "local") vistaLocal(v);
     else vistaInicio(v);
   } catch (e) {
@@ -1288,6 +1291,138 @@ async function guardarLocal(f) {
   cargando(btn, false);
 }
 
+/* ---------- Agenda ---------- */
+const hoyAR = () => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+function fechaLarga(fecha, hora) {
+  const t = new Date(fecha + "T12:00:00").toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" });
+  return t.charAt(0).toUpperCase() + t.slice(1) + (hora ? ` · ${hora} hs` : "");
+}
+const ordenEvento = e => e.fecha + (e.hora || "");
+let eventoEd = null; // { id, version, foto (ruta guardada), nueva: {blob, url} | null, quitar }
+
+async function vistaEventos(v) {
+  const sigue = vigente();
+  const cabecera = `<div class="cabecera"><h1 class="titulo">Agenda</h1><a class="btn primario" href="#evento/nuevo">+ Nuevo evento</a></div>`;
+  v.innerHTML = cabecera + `<div class="vacio">Cargando…</div>`;
+  const evs = await api.eventos();
+  if (!sigue()) return;
+  estado.eventos = evs;
+  const hoy = hoyAR();
+  const proximos = evs.filter(e => e.fecha >= hoy).sort((a, b) => ordenEvento(a).localeCompare(ordenEvento(b)));
+  const pasados = evs.filter(e => e.fecha < hoy).sort((a, b) => ordenEvento(b).localeCompare(ordenEvento(a)));
+  const fila = e => {
+    const d = new Date(e.fecha + "T12:00:00");
+    return `<div class="fila-evento ${e.visible ? "" : "inactivo"}">
+      <div class="fecha-ev"><b>${d.getDate()}</b>${d.toLocaleDateString("es-AR", { month: "short" }).replace(".", "")}</div>
+      <div class="mini">${e.foto ? `<img src="${esc(api.urlFoto(e.foto))}" alt="" loading="lazy">` : ""}</div>
+      <div class="info"><a href="#evento/${e.id}" class="nombre">${esc(e.titulo)}</a><span class="sub">${esc(fechaLarga(e.fecha, e.hora))}</span></div>
+      ${e.visible ? "" : `<span class="badge bajo">Oculto</span>`}
+      <div class="botones"><a class="btn chico" href="#evento/${e.id}">Editar</a>
+        <button class="btn chico peligro" data-accion="eliminar-evento" data-id="${e.id}">Eliminar</button></div></div>`;
+  };
+  v.innerHTML = cabecera + `
+    <p class="sub">La web muestra los eventos visibles de hoy en adelante, los más cercanos primero. Los que ya pasaron se ocultan solos.</p>
+    <section class="panel"><h2>Próximos</h2>
+      ${proximos.length ? proximos.map(fila).join("") : `<div class="vacio chico">No hay eventos próximos. <a class="btn primario" href="#evento/nuevo">+ Cargar uno</a></div>`}</section>
+    ${pasados.length ? `<details class="panel pasados"><summary>Ya pasaron (${pasados.length})</summary>${pasados.map(fila).join("")}</details>` : ""}`;
+}
+
+async function vistaEvento(v, id) {
+  const nuevo = id === "nuevo";
+  let e = null;
+  if (!nuevo) {
+    if (!estado.eventos) estado.eventos = await api.eventos();
+    e = estado.eventos.find(x => x.id === id);
+    if (!e) { v.innerHTML = `<div class="vacio">Ese evento no existe o fue eliminado. <a href="#eventos">Volver a la agenda</a></div>`; return; }
+  }
+  eventoEd = { id: e?.id || null, version: e?.version || 0, foto: e?.foto || null, nueva: null, quitar: false };
+  const val = k => esc(e?.[k] ?? "");
+  v.innerHTML = `
+    <div class="cabecera"><h1 class="titulo">${nuevo ? "Nuevo evento" : "Editar evento"}</h1><a class="btn" href="#eventos">← Volver</a></div>
+    <form id="formEvento" class="form-prod" novalidate>
+      <section class="panel">
+        <h2>Datos</h2>
+        <div class="campos">
+          ${campo("ev_titulo", "Título *", `<input id="ev_titulo" name="titulo" maxlength="80" required value="${val("titulo")}" placeholder="Ej: Lanzamiento IPA de la casa">`, "ancho")}
+          ${campo("ev_fecha", "Fecha *", `<input id="ev_fecha" name="fecha" type="date" required value="${val("fecha")}" ${nuevo ? `min="${hoyAR()}"` : ""}>`)}
+          ${campo("ev_hora", "Hora", `<input id="ev_hora" name="hora" type="time" value="${val("hora")}">`, "", "Opcional. Vacía = todo el día.")}
+          ${campo("ev_descripcion", "Descripción", `<textarea id="ev_descripcion" name="descripcion" maxlength="600" rows="4" placeholder="Ej: Música en vivo y pinta de bienvenida para los primeros 30.">${val("descripcion")}</textarea>`, "ancho", "Hasta 600 caracteres.")}
+        </div>
+        <label class="check"><input type="checkbox" name="visible" ${e && !e.visible ? "" : "checked"}> Mostrar en la web</label>
+      </section>
+      <section class="panel">
+        <h2>Foto</h2>
+        <div id="fotoEvento"></div>
+        <p class="sub">Opcional: el flyer o una foto del local. Horizontal queda mejor. Se achica sola.</p>
+      </section>
+      <p class="error" id="errEvento" role="alert"></p>
+      <div class="barra-guardar">
+        ${nuevo ? "" : `<button type="button" class="btn peligro" data-accion="eliminar-evento" data-id="${e.id}">Eliminar</button>`}
+        <span class="espacio"></span>
+        <a class="btn" href="#eventos">Cancelar</a>
+        <button class="btn primario" type="submit" id="btnEvento">${nuevo ? "Crear evento" : "Guardar cambios"}</button>
+      </div>
+    </form>`;
+  pintarFotoEvento();
+}
+function pintarFotoEvento() {
+  const c = $("#fotoEvento"); if (!c) return;
+  const url = eventoEd.nueva ? eventoEd.nueva.url : (!eventoEd.quitar && eventoEd.foto ? api.urlFoto(eventoEd.foto) : "");
+  const elegir = texto => `<label class="btn ${url ? "chico" : "subir"}">${texto}<input type="file" id="archivoEvento" class="oculto-visual" accept="image/*"></label>`;
+  c.innerHTML = url
+    ? `<figure class="foto-evento"><img src="${esc(url)}" alt="Foto del evento"></figure>
+       <div class="fila-botones izq">${elegir("Cambiar foto")}<button type="button" class="btn chico peligro" data-accion="quitar-foto-evento">Quitar foto</button></div>`
+    : elegir("+ Elegir foto");
+}
+async function elegirFotoEvento(input) {
+  const archivo = input.files[0]; input.value = "";
+  if (!archivo) return;
+  try {
+    const { blob } = await prepararFoto(archivo);
+    if (eventoEd.nueva) URL.revokeObjectURL(eventoEd.nueva.url);
+    eventoEd.nueva = { blob, url: URL.createObjectURL(blob) };
+    formSucio = true; pintarFotoEvento();
+  } catch (e) { mostrarError(e); }
+}
+function quitarFotoEvento() {
+  if (eventoEd.nueva) URL.revokeObjectURL(eventoEd.nueva.url);
+  eventoEd.nueva = null; eventoEd.quitar = true;
+  formSucio = true; pintarFotoEvento();
+}
+async function guardarEvento(f) {
+  const err = $("#errEvento"); err.textContent = "";
+  const datos = { titulo: f.titulo.value.trim(), fecha: f.fecha.value, hora: f.hora.value.slice(0, 5) || null,
+    descripcion: f.descripcion.value.trim(), visible: f.visible.checked };
+  if (datos.titulo.length < 2) return err.textContent = "Escribí el título del evento.";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(datos.fecha)) return err.textContent = "Elegí la fecha del evento.";
+  if (datos.hora && !/^([01]\d|2[0-3]):[0-5]\d$/.test(datos.hora)) return err.textContent = "Revisá la hora: escribila así, 21:30.";
+  const btn = $("#btnEvento"); cargando(btn, true);
+  let subida = null;
+  try {
+    if (eventoEd.nueva) subida = datos.foto = await api.subirFotoEvento(eventoEd.nueva.blob);
+    else if (eventoEd.quitar) datos.foto = null;
+    if (eventoEd.id) await api.actualizarEvento(eventoEd.id, datos, eventoEd.version); else await api.crearEvento(datos);
+    // La foto anterior se borra recién cuando el evento quedó guardado con la nueva (o sin foto)
+    if (eventoEd.foto && (subida || eventoEd.quitar)) api.borrarArchivos([eventoEd.foto]).catch(e => console.warn(e));
+    estado.eventos = null; formSucio = false;
+    toast(`${eventoEd.id ? "Evento guardado" : "Evento creado"}. Recargá la web para verlo.`);
+    location.hash = "#eventos";
+  } catch (e) {
+    if (subida) api.borrarArchivos([subida]).catch(x => console.warn(x));
+    mostrarError(e); cargando(btn, false);
+  }
+}
+async function eliminarEvento(id) {
+  const e = (estado.eventos || []).find(x => x.id === id);
+  if (!await confirmar(`¿Eliminar ${e ? `"${e.titulo}"` : "este evento"}?`, "Deja de mostrarse en la web. No se puede deshacer.")) return;
+  try {
+    await api.eliminarEvento(id);
+    estado.eventos = null; formSucio = false;
+    toast("Evento eliminado.");
+    if (location.hash.startsWith("#evento/")) location.hash = "#eventos"; else enrutar();
+  } catch (err) { mostrarError(err); }
+}
+
 /* ---------- Eventos ---------- */
 document.addEventListener("click", async e => {
   const b = e.target.closest("[data-accion]"); if (!b) return;
@@ -1301,6 +1436,8 @@ document.addEventListener("click", async e => {
   if (a === "separar") abrirSeparar(b.dataset.id);
   if (a === "descontar") abrirDescontar(Number(b.dataset.id));
   if (a === "eliminar") eliminar(b.dataset.id);
+  if (a === "eliminar-evento") eliminarEvento(b.dataset.id);
+  if (a === "quitar-foto-evento") quitarFotoEvento();
   if (a === "cerrar-modal") cerrarModal();
   if (a.startsWith("foto-")) accionFoto(a, Number(b.dataset.i), Number(b.dataset.d));
   if (a === "guardar-nota") {
@@ -1334,6 +1471,7 @@ document.addEventListener("submit", async e => {
   if (id === "formSeparar") guardarSeparar(f);
   if (id === "formDescontar") guardarDescontar(f);
   if (id === "formLocal") guardarLocal(f);
+  if (id === "formEvento") guardarEvento(f);
   if (id === "formAjustes") {
     const n = entero(f.min.value);
     if (n === null || !(n >= 0 && n <= 100000)) return toast("Usá un número entero, 0 o más.", "error");
@@ -1357,7 +1495,7 @@ document.addEventListener("input", e => {
   if (t.closest("#formStock")) actualizarPreviaStock();
   if (t.closest("#formSeparar")) $("#totalSeparar").textContent =
     [...document.querySelectorAll("#formSeparar input[name=cant]")].reduce((s, i) => s + (Math.max(0, entero(i.value)) || 0), 0);
-  if (t.closest("#formProducto, #formLocal")) formSucio = true;
+  if (t.closest("#formProducto, #formLocal, #formEvento")) formSucio = true;
   if (t.id === "opciones") {
     redibujarStockInicial();
     if ($("#fotos")?.dataset.opciones !== listaOpciones(t.value).join("|")) pintarFotos();
@@ -1375,6 +1513,7 @@ document.addEventListener("change", e => {
   }
   if (t.id === "fhist") location.hash = "#historial" + (t.value ? "?p=" + t.value : "");
   if (t.id === "archivos") agregarFotos(t);
+  if (t.id === "archivoEvento") elegirFotoEvento(t);
   if (t.dataset.fotoOpcion !== undefined && edicion) { edicion.fotos[Number(t.dataset.fotoOpcion)].opcion = t.value || null; formSucio = true; }
   if (t.dataset.cambio === "activo") cambiarActivo(t);
   if (t.dataset.cambio === "estado-pedido") actualizarPedido(Number(t.dataset.id), { estado: t.value }, t);

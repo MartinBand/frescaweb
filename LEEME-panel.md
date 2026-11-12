@@ -144,7 +144,16 @@ En Supabase: **Project Settings → API Keys**.
   - Tocando la foto o el nombre de un producto se abre su vista grande, con todas las fotos: se pasan deslizando con el dedo, con las flechas o con las miniaturas.
   - Si un producto tiene más de una foto, la tarjeta lo indica ("3 fotos").
   - Al elegir un color, la tarjeta y la vista grande muestran la foto de ese color. Desde la vista grande también se puede agregar al pedido.
-  - Cada producto tiene su propio enlace para compartir, por ejemplo `fresca-merch.netlify.app/#producto/gorro-de-lana-fresca`.
+  - Cada producto tiene su propio enlace para compartir, por ejemplo `fresca-merch.netlify.app/#producto/gorro-de-lana-fresca`. En la vista grande, el botón **Compartir** abre el menú de compartir del celular (o copia el enlace en la compu).
+  - Debajo de la vista grande aparece **También te puede gustar**: hasta 4 productos con stock, primero de la misma categoría.
+  - Arriba de los productos hay un buscador y un selector de orden (A → Z, Z → A, menor y mayor precio). Si hay productos con precio promocional, aparece el filtro **🔥 En oferta**.
+  - Con productos en el pedido, abajo aparece una barra con la cantidad, el total y **Ver pedido**. Se esconde sola cuando ya estás en la sección del pedido.
+- **Agenda:**
+  - **+ Nuevo evento:** título, fecha, hora (opcional; vacía = todo el día), descripción y una foto opcional (el flyer o una foto del local; horizontal queda mejor).
+  - La web muestra en la sección **Agenda** los eventos visibles de hoy en adelante, los más cercanos primero (hasta 12). Los de hoy y mañana llevan la etiqueta «Hoy» o «Mañana». Si no hay ninguno próximo, la sección no aparece.
+  - Los que ya pasaron se ocultan solos de la web y quedan en el panel, en **Ya pasaron**.
+  - Destildando **Mostrar en la web** el evento queda guardado pero no se ve.
+  - Cada evento tiene en la web los botones **Agendar** (lo suma a Google Calendar; si tiene hora, calcula 3 horas de duración) y **Compartir**.
 - **Local:**
   - **¿Está abierto?:** el cartel «Abierto ahora / Cerrado ahora» de la web sale de los horarios (*Según los horarios*). Si un día abrís o cerrás distinto, elegí **Abierto** o **Cerrado** y queda fijo hasta que vuelvas a *Según los horarios*; mientras tanto, Inicio te lo recuerda.
   - **Aviso en la web:** un texto opcional que se ve arriba de los horarios (ej.: «Cerrado por vacaciones hasta el 5 de enero»).

@@ -151,6 +151,8 @@ section{padding:56px 0;position:relative;scroll-margin-top:62px}
 .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;position:relative;z-index:1}
 .filtros button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:14px;font-weight:700}
 .filtros button.on{background:var(--turquesa);border-color:var(--turquesa);color:#062420}
+.filtros button.oferta{border-color:rgba(255,122,89,.55);color:#ffb59f}
+.filtros button.oferta.on{background:#ff7a59;border-color:#ff7a59;color:#1d0b05}
 /* Buscador y orden */
 .herramientas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1}
 .buscar{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:0 6px 0 14px}
@@ -224,6 +226,40 @@ body:has(.vista[open]){overflow:hidden}
 .v-info h2{font-size:26px;line-height:1.15;font-weight:800;padding-right:36px}
 .v-info .desc{font-size:15px}
 .v-info .precio{margin:6px 0 2px;font-size:38px}
+.v-compartir{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin-top:4px;background:none;border:1px solid var(--line);color:var(--text);border-radius:99px;padding:9px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.v-compartir:hover{border-color:var(--neon);color:var(--neon)}
+/* Vista: también te puede gustar */
+.v-rel{padding:20px 22px 24px;border-top:1px solid var(--line)}
+.v-rel h3{font-size:28px;margin-bottom:12px}
+.v-rel-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.v-rel a{display:flex;flex-direction:column;gap:6px;color:var(--text);text-decoration:none;font-weight:700;font-size:14px;line-height:1.25}
+.v-rel .r-foto{aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--panel2) url('fotos/logo-fresca.png') center/50% no-repeat}
+.v-rel .r-foto img{width:100%;height:100%;object-fit:cover;transition:transform .2s}
+.v-rel a:hover .r-foto img{transform:scale(1.04)}
+.v-rel a:hover .r-nombre{color:var(--neon)}
+.v-rel .r-precio{font-family:'Bebas Neue';font-size:22px;font-weight:400;color:var(--neon);line-height:1}
+.v-rel .r-precio s{font-family:'Archivo';font-size:12px;color:var(--muted);margin-right:6px}
+.v-rel .r-consultar{font-family:'Archivo';font-size:13px;color:var(--muted)}
+
+/* Agenda */
+.agenda-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;position:relative;z-index:1}
+.evento{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.evento .e-foto{aspect-ratio:16/9;background:var(--panel2)}
+.evento .e-foto img{width:100%;height:100%;object-fit:cover}
+.e-cuerpo{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;padding:16px}
+.e-fecha{width:64px;text-align:center;border:2px dashed var(--violeta);border-radius:12px;padding:6px 2px;line-height:1.05;text-transform:uppercase;font-weight:800;font-size:12px;color:var(--muted);align-self:start}
+.e-fecha b{display:block;font-family:'Bebas Neue';font-weight:400;font-size:38px;color:var(--neon);line-height:.95}
+.e-fecha span{color:var(--violeta-cl)}
+.e-info{display:flex;flex-direction:column;gap:6px;min-width:0}
+.e-info h3{font-size:19px;line-height:1.2}
+.e-hora{color:#7fe3d6;font-weight:800;font-size:14px}
+.e-etq{align-self:flex-start;background:var(--neon);color:#111;font-size:12px;font-weight:800;padding:2px 9px;border-radius:99px}
+.e-desc{color:var(--muted);font-size:14px;white-space:pre-line}
+.e-acciones{display:flex;gap:8px;padding:0 16px 16px;margin-top:auto}
+.e-acciones a,.e-acciones button{flex:1;display:inline-flex;justify-content:center;align-items:center;gap:6px;height:42px;border-radius:10px;font:inherit;font-size:14px;font-weight:800;text-decoration:none;cursor:pointer}
+.e-acciones a{background:var(--neon);color:#111;border:0}
+.e-acciones button{background:none;color:var(--text);border:1px solid var(--line)}
+.e-acciones button:hover{border-color:var(--neon);color:var(--neon)}
 
 /* Pizarra (como las del local) */
 .pizarra{background:linear-gradient(160deg,#1c3a2c,#132a20);border:12px solid var(--madera);border-radius:10px;box-shadow:inset 0 0 40px rgba(0,0,0,.5),0 10px 30px rgba(0,0,0,.4);padding:26px 22px;position:relative}
@@ -278,9 +314,15 @@ textarea{min-height:70px;resize:vertical}
 .error{color:#ff8f80;font-size:14px;margin-top:8px;min-height:1em}
 
 /* Barra inferior */
-.barra{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--neon);color:#111;display:none;box-shadow:0 -6px 24px rgba(230,239,110,.25)}
-.barra .wrap{display:flex;justify-content:space-between;align-items:center;height:58px;font-weight:800}
-.barra a{background:#111;color:var(--neon);text-decoration:none;padding:9px 16px;border-radius:99px}
+/* Aparece con productos en el pedido; se esconde cuando ya se está viendo la sección del pedido */
+.barra{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--neon);color:#111;box-shadow:0 -6px 24px rgba(230,239,110,.25);padding-bottom:env(safe-area-inset-bottom);transform:translateY(110%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s}
+.barra.ver{transform:none;visibility:visible;transition:transform .25s ease}
+.barra.salto{animation:salto .4s ease}
+@keyframes salto{40%{transform:translateY(-6px)}}
+.barra .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;height:58px;font-weight:800}
+.barra .b-txt{display:flex;align-items:center;gap:8px;min-width:0}
+.barra .b-txt svg{flex-shrink:0}
+.barra a{flex-shrink:0;background:#111;color:var(--neon);text-decoration:none;padding:9px 16px;border-radius:99px}
 
 footer{position:relative;padding:50px 0 100px;color:var(--muted);font-size:14px;text-align:center;overflow:hidden}
 footer .logo{width:220px;margin:0 auto 10px}
@@ -312,7 +354,11 @@ footer .frase{color:var(--violeta-cl);font-size:30px;margin-bottom:8px}
   .v-info{padding:18px 16px 28px}
   .v-info h2{font-size:22px;padding-right:0}
   .v-info .add{flex:1}
+  .v-rel{padding:18px 16px 28px}
+  .v-rel-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .agenda-grid{grid-template-columns:1fr}
 }
+@media (prefers-reduced-motion:reduce){ .barra,.barra.ver{transition:none} .barra.salto{animation:none} }
 @media (prefers-reduced-motion:reduce){
   .neon.parpadeo,.foco,.banda .pista{animation:none}
   html{scroll-behavior:auto}
@@ -413,6 +459,14 @@ footer .frase{color:var(--violeta-cl);font-size:30px;margin-bottom:8px}
   </div>
 </section>
 
+<section id="agenda" hidden>
+  <div class="wrap">
+    <h2 class="sec-title display"><span class="script">pasá por la esquina</span>Agenda</h2>
+    <p class="sec-sub">Lo que se viene en Fresca.</p>
+    <div class="agenda-grid" id="agendaGrid"></div>
+  </div>
+</section>
+
 <section id="local" class="mural">
   <div class="wrap local">
     <div class="polaroid"><img src="fotos/local.jpg" alt="La barra de Fresca"><span>pasá a buscarlo por la barra</span></div>
@@ -485,7 +539,10 @@ footer .frase{color:var(--violeta-cl);font-size:30px;margin-bottom:8px}
   <p id="pieDatos">Almacén cervecero · Mercedes, Buenos Aires</p>
 </footer>
 
-<div class="barra" id="barra"><div class="wrap"><span id="barraTxt"></span><a href="#pedido">Ver pedido</a></div></div>
+<div class="barra" id="barra"><div class="wrap">
+  <span class="b-txt"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20.5" r="1.2"/><circle cx="17" cy="20.5" r="1.2"/></svg><span id="barraTxt"></span></span>
+  <a href="#pedido" onclick="irAPedido();return false">Ver pedido →</a>
+</div></div>
 <div class="toast" id="toast"></div>
 <dialog class="vista" id="vista" aria-labelledby="vTitulo">
   <button type="button" class="v-cerrar" id="vCerrar" aria-label="Cerrar">✕</button>
@@ -609,6 +666,7 @@ async function cargarProductos(){
       const j = await r.json();
       if (Array.isArray(j.productos)) lista = j.productos;
       if (j.config) aplicarConfig(j.config);
+      pintarAgenda(j.eventos);
     }catch(e){ console.warn("No se pudo leer la planilla", e); }
   }
   if (!lista){ lista = PRODUCTOS_RESPALDO; respaldo = !!CONFIG.sheetUrl; }
@@ -630,10 +688,15 @@ async function cargarProductos(){
   pintarFiltros(); pintarGrid(); pintarPedido(); abrirDesdeHash();
 }
 
+// "En oferta" es un filtro más: aparece solo si hay productos con precio tachado
+const OFERTA = "__oferta";
+const enOferta = p => p.antes > p.precio && p.estado === "ok";
 function pintarFiltros(){
-  const cats = ["Todos", ...new Set(productos.map(p=>p.categoria))];
-  $("filtros").innerHTML = cats.length > 2 ? cats.map(c =>
-    `<button class="${c===filtro?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("") : "";
+  const cats = ["Todos", ...new Set(productos.map(p=>p.categoria))], hayOferta = productos.some(enOferta);
+  if (filtro === OFERTA ? !hayOferta : !cats.includes(filtro)) filtro = "Todos";
+  $("filtros").innerHTML = cats.length > 2 || hayOferta ? cats.map(c =>
+    `<button class="${c===filtro?'on':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join("") +
+    (hayOferta ? `<button class="oferta ${filtro===OFERTA?'on':''}" data-cat="${OFERTA}">🔥 En oferta</button>` : "") : "";
 }
 $("filtros").addEventListener("click", e => { const b = e.target.closest("button[data-cat]"); if (b) filtrar(b.dataset.cat); });
 function filtrar(c){ filtro = c; pintarFiltros(); pintarGrid(); }
@@ -678,12 +741,12 @@ function pintarGrid(){
   $("herramientas").hidden = !productos.length;
   const busqueda = $("buscar").value.trim(), palabras = sinTildes(busqueda).split(/\s+/).filter(Boolean);
   $("limpiarBusqueda").hidden = !busqueda;
-  const lista = productos.filter(p => (filtro==="Todos" || p.categoria===filtro) && coincide(p, palabras));
+  const lista = productos.filter(p => (filtro==="Todos" || (filtro===OFERTA ? enOferta(p) : p.categoria===filtro)) && coincide(p, palabras));
   const orden = ORDENES[$("orden").value];
   if (orden) lista.sort(orden);
   if (!lista.length){
     $("grid").innerHTML = palabras.length
-      ? `<div class="sin-resultados">No encontramos productos para «${esc(busqueda)}»${filtro !== "Todos" ? ` en ${esc(filtro)}` : ""}.<button type="button" data-limpiar>Ver todos</button></div>`
+      ? `<div class="sin-resultados">No encontramos productos para «${esc(busqueda)}»${filtro === OFERTA ? " en oferta" : filtro !== "Todos" ? ` en ${esc(filtro)}` : ""}.<button type="button" data-limpiar>Ver todos</button></div>`
       : '<div class="cargando">Pronto vamos a sumar productos.</div>';
     return;
   }
@@ -733,7 +796,9 @@ function agregar(id, enVista){
   if (ex) ex.cant += q; else carrito.push({nombre:p.nombre, opcion:op, cant:q, precio:p.precio});
   qtySel[id] = 1; const qs = $("q_"+id); if (qs) qs.textContent = 1;
   if (enVista) cerrarVista();
-  guardar(); pintarPedido(); toast("Agregado: " + p.nombre + (op?" ("+op+")":""));
+  const yaHabia = barraConProductos;
+  guardar(); pintarPedido(); if (yaHabia) saltarBarra();
+  toast("Agregado: " + p.nombre + (op?" ("+op+")":""));
 }
 
 /* Vista de producto: fotos grandes, se desliza o se usan las flechas.
@@ -765,13 +830,47 @@ function abrirVista(p){
         ${agot ? "" : `<div class="qty"><button type="button" data-vq="-1" aria-label="Menos">−</button><span id="vq">1</span><button type="button" data-vq="1" aria-label="Más">+</button></div>`}
         <button type="button" class="add" id="vAgregar" ${agot ? "disabled" : ""}>${agot ? "Sin stock" : "Agregar al pedido"}</button>
       </div>
-    </div></div>`;
+      <button type="button" class="v-compartir" id="vCompartir">${ICONO_COMPARTIR}<span>Compartir</span></button>
+    </div></div>${htmlRelacionados(p)}`;
   if (!$("vista").open) $("vista").showModal();
   $("vista").scrollTop = 0;
   const tira = $("vTira");
   if (tira) tira.addEventListener("scroll", () => marcarFoto(), {passive:true});
   irAFoto(inicio, "auto");
   $("vCerrar").focus();
+}
+// Hasta 4 productos con stock: primero de la misma categoría, después los que siguen en la lista
+function relacionados(p){
+  const i = productos.indexOf(p), ok = x => x !== p && x.estado === "ok";
+  const resto = [...productos.slice(i + 1), ...productos.slice(0, i)].filter(ok);
+  return [...resto.filter(x => x.categoria === p.categoria), ...resto.filter(x => x.categoria !== p.categoria)].slice(0, 4);
+}
+function htmlRelacionados(p){
+  const rel = relacionados(p);
+  return rel.length ? `<div class="v-rel"><h3 class="display">También te puede gustar</h3><div class="v-rel-grid">${rel.map(x => `
+    <a href="#producto/${esc(x.slug)}" data-rel="${esc(x.slug)}">
+      <span class="r-foto">${x.fotos[0] ? `<img src="${esc(srcTarjeta(x.fotos[0]))}" alt="" loading="lazy" onerror="this.remove()">` : ""}</span>
+      <span class="r-nombre">${esc(x.nombre)}</span>
+      <span class="r-precio">${x.precio > 0 ? (x.antes > x.precio ? `<s>${fmt(x.antes)}</s>` : "") + fmt(x.precio) : '<small class="r-consultar">Precio a consultar</small>'}</span>
+    </a>`).join("")}</div></div>` : "";
+}
+// Compartir: el menú del celular si existe; si no, copia el enlace directo al producto
+const ICONO_COMPARTIR = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>';
+async function compartir(datos, alCopiar){
+  if (navigator.share) {
+    try { await navigator.share(datos); } catch(e) { /* la persona cerró el menú */ }
+    return;
+  }
+  try { await navigator.clipboard.writeText(datos.url); alCopiar(); }
+  catch(e) { window.prompt("Copiá el enlace:", datos.url); }
+}
+function compartirProducto(){
+  const p = vistaP, b = $("vCompartir");
+  compartir({title: p.nombre + " · Fresca", text: p.nombre + (p.precio > 0 ? " — " + fmt(p.precio) : "") + " en Fresca", url: location.origin + location.pathname + "#producto/" + p.slug},
+    () => { // el aviso común queda tapado por la vista, así que el botón mismo lo dice
+      b.querySelector("span").textContent = "¡Enlace copiado!";
+      clearTimeout(b._t); b._t = setTimeout(() => { if (b.isConnected) b.querySelector("span").textContent = "Compartir"; }, 2000);
+    });
 }
 function fotoActual(){ const t = $("vTira"); return t && t.clientWidth ? Math.round(t.scrollLeft / t.clientWidth) : 0; }
 function irAFoto(i, comportamiento){
@@ -813,6 +912,15 @@ $("vista").addEventListener("click", e => {
   if (mini) irAFoto(Number(mini.dataset.foto));
   if (q) { vistaQ = Math.max(1, vistaQ + Number(q.dataset.vq)); $("vq").textContent = vistaQ; }
   if (t.closest("#vAgregar")) agregar(vistaP.id, true);
+  if (t.closest("#vCompartir")) compartirProducto();
+  // Otro producto en la misma vista, sin sumar pasos al "atrás": así ✕ y atrás siguen cerrando la vista
+  const rel = t.closest("[data-rel]");
+  if (rel) {
+    e.preventDefault();
+    const p = productos.find(x => x.slug === rel.dataset.rel); if (!p) return;
+    history.replaceState(null, "", "#producto/" + p.slug);
+    abrirVista(p);
+  }
 });
 $("vista").addEventListener("change", e => {
   if (e.target.id !== "vop") return;
@@ -847,11 +955,17 @@ function pintarPedido(){
     </div>`).join("") : '<div class="vacio">Todavía no agregaste productos.</div>';
   $("total").textContent = carrito.length ? totalTexto(total, sinPrecio) : "$0";
   $("notaTotal").textContent = carrito.length ? "El total final (con envío, si corresponde) te lo confirmamos por WhatsApp." : "";
-  $("barra").style.display = unidades ? "block" : "none";
+  barraConProductos = unidades > 0; mostrarBarra();
   $("barraTxt").textContent = unidades + (unidades===1?" producto · ":" productos · ") + (sinPrecio && !(total>0) ? "precio a confirmar" : fmt(total) + (sinPrecio?" +":""));
 }
 
-function irAPedido(){ $("pedido").scrollIntoView({behavior:"smooth"}); }
+// La barra de abajo se ve si hay productos en el pedido y no se está mirando ya la sección del pedido
+let barraConProductos = false, pedidoALaVista = false;
+function mostrarBarra(){ $("barra").classList.toggle("ver", barraConProductos && !pedidoALaVista); }
+if ("IntersectionObserver" in window)
+  new IntersectionObserver(([e]) => { pedidoALaVista = e.isIntersecting; mostrarBarra(); }, {threshold: 0.15}).observe($("pedido"));
+function saltarBarra(){ const b = $("barra"); if (!b.classList.contains("ver")) return; b.classList.remove("salto"); void b.offsetWidth; b.classList.add("salto"); }
+function irAPedido(){ $("pedido").scrollIntoView({behavior: suave()}); }
 function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove("on"),1800); }
 
 /* Banda que pasa */
@@ -877,6 +991,61 @@ function abiertoAhora(){
   return !!ayer && aMin(ayer[1]) < aMin(ayer[0]) && min < aMin(ayer[1]);   // sigue abierto de anoche
 }
 // Mapa de Google (gratis, sin clave): se arma con la dirección del local
+/* Agenda: la manda el Apps Script desde el panel. Los eventos que ya pasaron no se muestran. */
+const diaAR = ms => new Intl.DateTimeFormat("en-CA",{timeZone:"America/Argentina/Buenos_Aires"}).format(new Date(ms)); // "2026-11-12"
+const fechaDe = f => new Date(f + "T12:00:00");
+let eventos = [];
+function fechaEvento(e){
+  const t = fechaDe(e.fecha).toLocaleDateString("es-AR",{weekday:"long",day:"numeric",month:"long"});
+  return t.charAt(0).toUpperCase() + t.slice(1) + (e.hora ? ` · ${e.hora} hs` : "");
+}
+// Enlace para sumarlo a Google Calendar (si no tiene hora, todo el día; si tiene, se calculan 3 horas)
+function linkCalendario(e){
+  const [a, m, d] = e.fecha.split("-").map(Number), sinGuiones = s => s.replace(/[-:]/g, "");
+  let fechas;
+  if (e.hora) {
+    const [h, mi] = e.hora.split(":").map(Number);
+    fechas = sinGuiones(e.fecha) + "T" + sinGuiones(e.hora) + "00/" + sinGuiones(new Date(Date.UTC(a, m - 1, d, h + 3, mi)).toISOString().slice(0, 19));
+  } else fechas = sinGuiones(e.fecha) + "/" + sinGuiones(new Date(Date.UTC(a, m - 1, d + 1)).toISOString().slice(0, 10));
+  return "https://calendar.google.com/calendar/render?" + new URLSearchParams({action: "TEMPLATE", text: e.titulo + " · Fresca", dates: fechas,
+    ctz: "America/Argentina/Buenos_Aires", details: e.desc, location: "Fresca, " + CONFIG.direccion + ", Buenos Aires"});
+}
+function pintarAgenda(lista){
+  const hoy = diaAR(Date.now()), manana = diaAR(Date.now() + 864e5);
+  eventos = (Array.isArray(lista) ? lista : []).map(e => ({
+    titulo: String(e.titulo || "").trim(), fecha: String(e.fecha || ""), desc: String(e.descripcion || "").trim(),
+    hora: /^([01]\d|2[0-3]):[0-5]\d$/.test(e.hora) ? e.hora : "", foto: /^https:\/\//.test(e.foto || "") ? e.foto : ""
+  })).filter(e => e.titulo && /^\d{4}-\d{2}-\d{2}$/.test(e.fecha) && e.fecha >= hoy)
+    .sort((a, b) => (a.fecha + a.hora).localeCompare(b.fecha + b.hora)).slice(0, 12);
+  $("agenda").hidden = !eventos.length;
+  $("agendaGrid").innerHTML = eventos.map((e, i) => {
+    const d = fechaDe(e.fecha), f = o => d.toLocaleDateString("es-AR", o).replace(".", "");
+    const etq = e.fecha === hoy ? "Hoy" : e.fecha === manana ? "Mañana" : "";
+    return `<article class="evento">
+      ${e.foto ? `<div class="e-foto"><img src="${esc(e.foto)}" alt="" loading="lazy" onerror="this.parentNode.remove()"></div>` : ""}
+      <div class="e-cuerpo">
+        <div class="e-fecha" aria-hidden="true">${f({weekday: "short"})}<b>${d.getDate()}</b><span>${f({month: "short"})}</span></div>
+        <div class="e-info">
+          ${etq ? `<span class="e-etq">${etq}</span>` : ""}
+          <h3>${esc(e.titulo)}</h3>
+          <span class="e-hora">${esc(fechaEvento(e))}</span>
+          ${e.desc ? `<p class="e-desc">${esc(e.desc)}</p>` : ""}
+        </div>
+      </div>
+      <div class="e-acciones">
+        <a href="${esc(linkCalendario(e))}" target="_blank" rel="noopener">📅 Agendar</a>
+        <button type="button" data-ev="${i}">${ICONO_COMPARTIR} Compartir</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+$("agendaGrid").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-ev]"); if (!b) return;
+  const e = eventos[Number(b.dataset.ev)]; if (!e) return;
+  compartir({title: e.titulo + " · Fresca", text: `${e.titulo} — ${fechaEvento(e)} en Fresca`, url: location.origin + location.pathname + "#agenda"},
+    () => toast("Enlace copiado"));
+});
+
 function pintarMapa(){
   // "Calle 26 esquina 31, Mercedes" → "Calle 26 & Calle 31, Mercedes": así Google marca la esquina exacta
   const q = CONFIG.direccion ? CONFIG.direccion.replace(/\s+esquina\s+(?=\d)/i, " & Calle ").replace(/\s+esquina\s+/i, " & ") + ", Provincia de Buenos Aires, Argentina" : "";
