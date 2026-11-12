@@ -150,6 +150,19 @@ section{padding:56px 0;position:relative;scroll-margin-top:62px}
 .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;position:relative;z-index:1}
 .filtros button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:8px 16px;font-size:14px;font-weight:700}
 .filtros button.on{background:var(--turquesa);border-color:var(--turquesa);color:#062420}
+/* Buscador y orden */
+.herramientas{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;position:relative;z-index:1}
+.buscar{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:0 6px 0 14px}
+.buscar:focus-within,.orden select:focus-visible{border-color:var(--turquesa);box-shadow:0 0 0 3px rgba(34,184,168,.25)}
+.buscar svg{flex-shrink:0;color:var(--muted)}
+.buscar input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:inherit;font-size:16px;padding:10px 0}
+.buscar input::placeholder{color:var(--muted)}
+.buscar input::-webkit-search-cancel-button{display:none}
+.buscar .limpiar{flex-shrink:0;width:30px;height:30px;border-radius:99px;border:0;background:var(--panel2);color:var(--text);font-size:14px}
+.orden{flex:0 0 auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;font-weight:700}
+.orden select{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:99px;padding:10px 14px;font:inherit;font-size:15px;outline:0}
+.sin-resultados{color:var(--muted);padding:30px 0}
+.sin-resultados button{margin-left:6px;background:none;border:0;color:var(--neon);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;position:relative;z-index:1}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:visible;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s;position:relative}
 .card:hover{transform:translateY(-3px) rotate(-.4deg);box-shadow:0 12px 30px rgba(0,0,0,.45),0 0 0 1px rgba(230,239,110,.25)}
@@ -366,6 +379,22 @@ footer .frase{color:var(--violeta-cl);font-size:30px;margin-bottom:8px}
     <h2 class="sec-title display"><span class="script">la tiendita</span>Productos</h2>
     <p class="sec-sub">Elegí talle o color, sumalo al pedido y listo.</p>
     <div id="avisoCatalogo"></div>
+    <div class="herramientas" id="herramientas" hidden>
+      <label class="buscar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input type="search" id="buscar" placeholder="Buscar productos" aria-label="Buscar productos" autocomplete="off" enterkeyhint="search">
+        <button type="button" class="limpiar" id="limpiarBusqueda" aria-label="Borrar búsqueda" hidden>✕</button>
+      </label>
+      <label class="orden">Ordenar
+        <select id="orden">
+          <option value="">Destacados</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+          <option value="precio-asc">Menor precio</option>
+          <option value="precio-desc">Mayor precio</option>
+        </select>
+      </label>
+    </div>
     <div class="filtros" id="filtros"></div>
     <div class="grid" id="grid"><div class="cargando">Cargando productos…</div></div>
   </div>
@@ -608,6 +637,12 @@ function pintarFiltros(){
 }
 $("filtros").addEventListener("click", e => { const b = e.target.closest("button[data-cat]"); if (b) filtrar(b.dataset.cat); });
 function filtrar(c){ filtro = c; pintarFiltros(); pintarGrid(); }
+$("buscar").addEventListener("input", pintarGrid);
+$("buscar").addEventListener("keydown", e => { if (e.key === "Enter") e.target.blur(); }); // en el celular cierra el teclado
+$("orden").addEventListener("change", pintarGrid);
+function limpiarBusqueda(){ $("buscar").value = ""; filtro = "Todos"; pintarFiltros(); pintarGrid(); }
+$("limpiarBusqueda").addEventListener("click", () => { $("buscar").value = ""; pintarGrid(); $("buscar").focus(); });
+$("grid").addEventListener("click", e => { if (e.target.closest("[data-limpiar]")) limpiarBusqueda(); });
 
 const qtySel = {};
 function slug(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "producto"; }
@@ -626,9 +661,32 @@ function precioHtml(p){
 }
 // En las tarjetas va la copia chica de la foto (carga más rápido); en la vista grande, la grande
 const srcTarjeta = f => f.chica || f.src;
+// Buscador: sin tildes ni mayúsculas; tienen que aparecer todas las palabras escritas
+const sinTildes = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function coincide(p, palabras){
+  const texto = sinTildes([p.nombre, p.categoria, p.desc, p.pres, ...p.opciones].join(" "));
+  return palabras.every(w => texto.includes(w));
+}
+// Los que no tienen precio ("a consultar") van al final al ordenar por precio
+const ORDENES = {
+  "az": (a, b) => a.nombre.localeCompare(b.nombre, "es"),
+  "za": (a, b) => b.nombre.localeCompare(a.nombre, "es"),
+  "precio-asc": (a, b) => (a.precio > 0 ? a.precio : Infinity) - (b.precio > 0 ? b.precio : Infinity),
+  "precio-desc": (a, b) => (b.precio > 0 ? b.precio : -1) - (a.precio > 0 ? a.precio : -1)
+};
 function pintarGrid(){
-  const lista = productos.filter(p => filtro==="Todos" || p.categoria===filtro);
-  if (!lista.length){ $("grid").innerHTML = '<div class="cargando">Pronto vamos a sumar productos.</div>'; return; }
+  $("herramientas").hidden = !productos.length;
+  const busqueda = $("buscar").value.trim(), palabras = sinTildes(busqueda).split(/\s+/).filter(Boolean);
+  $("limpiarBusqueda").hidden = !busqueda;
+  const lista = productos.filter(p => (filtro==="Todos" || p.categoria===filtro) && coincide(p, palabras));
+  const orden = ORDENES[$("orden").value];
+  if (orden) lista.sort(orden);
+  if (!lista.length){
+    $("grid").innerHTML = palabras.length
+      ? `<div class="sin-resultados">No encontramos productos para «${esc(busqueda)}»${filtro !== "Todos" ? ` en ${esc(filtro)}` : ""}.<button type="button" data-limpiar>Ver todos</button></div>`
+      : '<div class="cargando">Pronto vamos a sumar productos.</div>';
+    return;
+  }
   $("grid").innerHTML = lista.map(p => {
     qtySel[p.id] = qtySel[p.id] || 1;
     const primera = p.opciones.find(o => !p.agotadas.includes(o));
