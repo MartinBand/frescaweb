@@ -73,6 +73,7 @@
   --radius:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth;overflow-x:hidden}
 section,footer,.hero{overflow-x:clip}
 body{background:var(--noche);color:var(--text);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
@@ -247,7 +248,6 @@ body:has(.vista[open]){overflow:hidden}
 .mapa iframe{display:block;width:100%;height:100%;border:0}
 .como-llegar{display:inline-block;margin-top:10px;color:var(--neon);font-weight:800;text-decoration:none}
 .como-llegar:hover{text-decoration:underline}
-.como-llegar[hidden]{display:none}
 
 /* Pedido */
 .pedido{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;align-items:start;position:relative;z-index:1}
@@ -645,7 +645,8 @@ $("limpiarBusqueda").addEventListener("click", () => { $("buscar").value = ""; p
 $("grid").addEventListener("click", e => { if (e.target.closest("[data-limpiar]")) limpiarBusqueda(); });
 
 const qtySel = {};
-function slug(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "producto"; }
+const sinTildes = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+function slug(s){ return sinTildes(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "producto"; }
 // Foto de un talle o color; si no tiene una propia, la principal
 function fotoPara(p, op){ return p.fotos.find(f => op && f.opcion === op) || p.fotos[0]; }
 function selOpciones(p, id, elegida){
@@ -661,8 +662,7 @@ function precioHtml(p){
 }
 // En las tarjetas va la copia chica de la foto (carga más rápido); en la vista grande, la grande
 const srcTarjeta = f => f.chica || f.src;
-// Buscador: sin tildes ni mayúsculas; tienen que aparecer todas las palabras escritas
-const sinTildes = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+// Buscador: tienen que aparecer todas las palabras escritas (sin importar tildes ni mayúsculas)
 function coincide(p, palabras){
   const texto = sinTildes([p.nombre, p.categoria, p.desc, p.pres, ...p.opciones].join(" "));
   return palabras.every(w => texto.includes(w));
